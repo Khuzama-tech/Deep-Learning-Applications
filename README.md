@@ -1,6 +1,8 @@
 <div align="center">
 
 # 🧠 Project 2, Week 5: Scene Classification with Transfer Learning
+### **Introduction to Applied AI | BS 7th Semester | Department of Electronics**
+**Student Name:** Khuzaima Ahmed | **Platform:** Kaggle Notebook (GPU T4)
 
 
 </div>
@@ -42,10 +44,10 @@ This repository contains the complete implementation and deliverables for **Lab 
 ---
 
 ## 🚀 Next: Week 6 Project Proposal
-* **Domain:** Plant Leaf Disease Detection in Agriculture.
-* **Problem & Beneficiaries:** Automated early-stage plant pathology classification to assist farmers and agricultural extension workers in maximizing crop yield and minimizing chemical overuse.
-* **Candidate Dataset:** *PlantVillage Dataset* (Kaggle), featuring thousands of labeled high-resolution images spanning multiple crop species and healthy/diseased leaf categories under an open-source license.
-* **Scope:** 4-6 target classes, leveraging transfer learning with ResNet-18/50.
+* **Domain:** Industrial Manufacturing Defects Inspection (Quality Control).
+* **Problem & Beneficiaries:** Automated surface defect detection (such as cracks, surface scratches, corrosion, or casting flaws) on manufactured components to assist quality assurance engineers and production lines in catching defects early, reducing waste, and ensuring high hardware reliability.
+* **Candidate Dataset:** *Severstal: Steel Defect Detection* or *NEU Surface Defect Database* (Kaggle), featuring thousands of labeled high-resolution industrial surface images categorized into distinct defect classes under an open-source license.
+* **Scope:** 4 target defect classes, leveraging transfer learning with ResNet-18/50.
 
 ---
 
