@@ -68,7 +68,7 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Parameter | Specification / Audit Result |
 | :--- | :--- |
-| **Dataset** | **Casting Product Quality Dataset** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product), Open/CC BY-SA 4.0); **7,300+ total grayscale images** across **2 classes** (`def_front` vs. `ok_front`); labeled by **Quality Assurance Inspectors / Domain Experts**. |
+| **Dataset** | **Casting Product Quality Dataset** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product), Open/CC BY-SA 4.0); **6,633 total grayscale images** across **2 classes** (`def_front` vs. `ok_front`); labeled by **Quality Assurance Inspectors / Domain Experts**. |
 | **Data Audit** | • **Imbalance Ratio**: ~$1.3:1$ (`def_front` vs `ok_front`)<br>• **Exact Duplicates**: `128`<br>• **Test Near-Duplicates in Train**: `327` of `715`]<br>• **Split Strategy**: Split by **part / batch**, **0 shared groups** between train and val|
 | **Imbalance Handling** | **Weighted Loss / Class Weights** using cross-entropy with weights `{'def_front': 0.883, 'ok_front': 1.154}`. |
 
