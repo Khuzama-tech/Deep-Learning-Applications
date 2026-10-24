@@ -50,7 +50,6 @@ This repository contains the complete implementation and deliverables for **Lab 
 * **Scope:** 4 target defect classes, leveraging transfer learning with ResNet-18/50.
 
 ---
-# 📄 README: Datasheet & Model Card
 
 ## 🏭 Week 6: Casting Defect Detection with ResNet-18
 
@@ -61,7 +60,7 @@ This repository contains the complete implementation and deliverables for **Lab 
 | Key Aspect | Details |
 | :--- | :--- |
 | **Who Benefits** | **Quality Control Engineers & Plant Operators** in **Foundry & Automotive Component Manufacturing Settings**. |
-| **Why It Matters** | Shipping a defective component downstream causes **exponential financial cost, potential assembly line shutdown, or field failure risks**. Catching defects automatedly with high recall prevents defective parts from reaching customers[cite: 3]. |
+| **Why It Matters** | Prevents structural failures in cast pump impellers and reduces scrap waste costs. Shipping a defective component downstream causes exponential financial cost, potential assembly line shutdown, or field failure risks. |
 
 ---
 
@@ -69,9 +68,9 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Parameter | Specification / Audit Result |
 | :--- | :--- |
-| **Dataset** | **Real-Life Industrial Dataset of Casting Product** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product), Open/CC BY-SA 4.0); **7,348 total images** across **2 classes** (`def_front` vs. `ok_front`); labeled by **Quality Assurance Inspectors / Domain Experts**. |
-| **Data Audit** | • **Imbalance Ratio**: ~$1.3:1$ (`def_front` vs `ok_front`)<br>• **Exact Duplicates**: `0`<br>• **Test Near-Duplicates in Train**: `0` (Verified via MD5 / perceptual hashing)<br>• **Split Strategy**: Split by **part / image ID**, **0 shared groups** across train/val/test splits to prevent data leakage. |
-| **Imbalance Handling** | **Weighted Loss / Class Weights** set based on training distribution, prioritizing defect detection (`POSITIVE = 'def_front'`)[cite: 3]. |
+| **Dataset** | **Casting Product Quality Dataset** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product), Open/CC BY-SA 4.0); **7,300+ total grayscale images** across **2 classes** (`def_front` vs. `ok_front`); labeled by **Quality Assurance Inspectors / Domain Experts**. |
+| **Data Audit** | • **Imbalance Ratio**: ~$1.3:1$ (`def_front` vs `ok_front`)<br>• **Exact Duplicates**: `128`<br>• **Test Near-Duplicates in Train**: `327` of `715`]<br>• **Split Strategy**: Split by **part / batch**, **0 shared groups** between train and val|
+| **Imbalance Handling** | **Weighted Loss / Class Weights** using cross-entropy with weights `{'def_front': 0.883, 'ok_front': 1.154}`. |
 
 ---
 
@@ -81,9 +80,9 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Metric | Target / Measured Value |
 | :--- | :--- |
-| **Macro-F1** | High overall classification F1 across both classes. |
-| **Key Per-Class Recall** | Target **Recall $\ge 0.95$** ($95\%$) on positive class (`def_front`)[cite: 3]. |
-| **Sensitivity & Specificity** | High sensitivity ($\ge 95\%$) and balanced specificity evaluated at calibrated threshold **$t$** (tuned exclusively on validation set)[cite: 3]. |
+| **Macro-F1** | **0.987** |
+| **Test AUC** | **0.999** |
+| **Sensitivity, Specificity & PPV** | Sensitivity **0.991**, Specificity **1.000**, and PPV **1.000** at threshold **0.185** (chosen on val for recall $\ge 0.95$) |
 
 ---
 
@@ -91,23 +90,20 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Aspect | Analysis |
 | :--- | :--- |
-| **Grad-CAM Focus** | Visual heatmaps confirm the model focuses directly on **surface anomalies, cracks, and pinholes** on the casting body. |
-| **Shortcut Risk** | Verified that the model is **not learning background fixtures, casting ring edges, or lighting gradients**. |
+| **Grad-CAM Focus** | Visual heatmaps confirm the model looks directly at **surface casting defect regions** on the casting body. |
+| **Shortcut Risk** | Checked and **none found**; model is not learning background fixtures, casting ring edges, or lighting gradients. |
 
 ---
 
 ### ⚠️ Limitations & Deployment Constraints
 
-* **Data Source & Scope**: Trained exclusively on top-down casting product surface inspection images taken under controlled lighting conditions.
-* **Population / Environment Conditions**: Variations in camera resolution, severe lens dirt, or uncalibrated factory lighting may affect predictions.
-* **Not For Use**: **Not for safety-critical structural failure prediction without human operator sign-off** or non-industrial image domains.
+- **Data Source & Scope**: Industrial images captured under specific foundry lighting and camera setups.
+- **Not For Use**: Not for structural load testing or non-metal castings, nor for safety-critical structural failure prediction without human operator sign-off.
 
 ---
-## 🛠️ Repository Structure
-```text
-├── notebook/
-│   └── Week_5_Transfer_Learning.ipynb   # Complete Kaggle notebook with code and markdown cells
-├── models/
-│   └── resnet18_intel.pt                # Saved model checkpoint weights (~44 MB)
-└── README.md                            # Comprehensive project documentation
 
+
+```text
+├── README.md                                             # Comprehensive project documentation & model card
+├── week-5-transfer-learning.ipynb                         # Week 5 transfer learning baseline notebook
+└── week06-industrial-manufacturing-defects-inspection.ipynb # Week 6 industrial QC & defect detection notebook
