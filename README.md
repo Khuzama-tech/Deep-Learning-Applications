@@ -46,7 +46,7 @@ This repository contains the complete implementation and deliverables for **Lab 
 ## 🚀 Next: Week 6 Project Proposal
 * **Domain:** Industrial Manufacturing Defects Inspection (Quality Control).
 * **Problem & Beneficiaries:** Automated surface defect detection (such as cracks, surface scratches, corrosion, or casting flaws) on manufactured components to assist quality assurance engineers and production lines in catching defects early, reducing waste, and ensuring high hardware reliability.
-* **Candidate Dataset:** *Severstal: Steel Defect Detection* or *NEU Surface Defect Database* (Kaggle), featuring thousands of labeled high-resolution industrial surface images categorized into distinct defect classes under an open-source license.
+* **Candidate Dataset:** *Severstal: Steel Defect Detection* or *casting product image data for quality inspection* (Kaggle), featuring thousands of labeled high-resolution industrial surface images categorized into distinct defect classes under an open-source license.
 * **Scope:** 4 target defect classes, leveraging transfer learning with ResNet-18/50.
 
 ---
