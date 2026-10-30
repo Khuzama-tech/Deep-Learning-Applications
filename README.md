@@ -51,6 +51,7 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 ---
 
+
 ## 🏭 Week 6: Casting Defect Detection with ResNet-18
 
 ---
@@ -59,8 +60,9 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Key Aspect | Details |
 | :--- | :--- |
-| **Who Benefits** | **Quality Control Engineers & Plant Operators** in **Foundry & Automotive Component Manufacturing Settings**. |
-| **Why It Matters** | Prevents structural failures in cast pump impellers and reduces scrap waste costs. Shipping a defective component downstream causes exponential financial cost, potential assembly line shutdown, or field failure risks. |
+| **Who Benefits** | **Quality Control Engineers & Plant Operators** in foundry and automotive component manufacturing settings. |
+| **Why It Matters** | Helps identify defective casting products, reduce scrap waste, and improve quality control. Detecting defective components before they move to the next production stage can reduce financial losses and potential manufacturing problems. |
+| **Model** | ResNet-18 pretrained on ImageNet and fine-tuned for binary casting defect classification. |
 
 ---
 
@@ -68,21 +70,105 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Parameter | Specification / Audit Result |
 | :--- | :--- |
-| **Dataset** | **Casting Product Quality Dataset** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product), Open/CC BY-SA 4.0); **6,633 total grayscale images** across **2 classes** (`def_front` vs. `ok_front`); labeled by **Quality Assurance Inspectors / Domain Experts**. |
-| **Data Audit** | • **Imbalance Ratio**: ~$1.3:1$ (`def_front` vs `ok_front`)<br>• **Exact Duplicates**: `128`<br>• **Test Near-Duplicates in Train**: `327` of `715`]<br>• **Split Strategy**: Split by **part / batch**, **0 shared groups** between train and val|
-| **Imbalance Handling** | **Weighted Loss / Class Weights** using cross-entropy with weights `{'def_front': 0.883, 'ok_front': 1.154}`. |
+| **Dataset** | **Casting Product Quality Dataset** ([Kaggle Dataset](https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product)) |
+| **Total Images** | 6,633 grayscale images |
+| **Classes** | 2 (`def_front` and `ok_front`) |
+| **Defective Images** | 3,758 |
+| **Non-Defective Images** | 2,875 |
+| **Imbalance Ratio** | Approximately 1.3:1 |
+| **Image Dimensions** | 300 × 300 pixels |
+| **Exact Duplicates** | 128 |
+| **Test Near-Duplicates in Train** | 327 out of 715 test images |
+| **Split Strategy** | Group-aware train/validation split with 0 shared groups between training and validation sets. |
+
+#### Dataset Split
+
+| Dataset | Number of Images |
+| :--- | ---: |
+| Training | 5,527 |
+| Validation | 1,106 |
+| Testing | 715 |
+| **Total** | **7,348** |
+
+**Note:** The split counts above are from a separate group-aware split output and do not add up to the original dataset count of 6,633. Verify the split source and dataset version before publishing these counts together.
+
+#### Imbalance Handling
+
+Class weights were calculated using weighted cross-entropy loss.
+
+```python
+class_weights = {
+    'def_front': 0.883,
+    'ok_front': 1.153
+}
+```
+
+These weights help balance the contribution of both classes during model training.
+
+---
+
+### 🧠 Model Training: ResNet-18
+
+- **Architecture:** ResNet-18
+- **Pretrained Weights:** ImageNet
+- **Trainable Parameters:** 8,394,754
+- **Training Strategy:** Two-phase transfer learning.
+
+#### Training Phases
+
+| Phase | Training Approach | Validation Macro-F1 |
+| :--- | :--- | ---: |
+| Phase 1 – Epoch 1 | Train classification head | 0.906 |
+| Phase 1 – Epoch 2 | Train classification head | 0.949 |
+| Phase 2 – Epoch 1 | Fine-tune last ResNet block | 0.989 |
+| Phase 2 – Epoch 2 | Fine-tune last ResNet block | 0.982 |
+| Phase 2 – Epoch 3 | Fine-tune last ResNet block | 0.995 |
+
+**Final Validation Macro-F1: 0.9954**
 
 ---
 
 ### 📈 Evaluation & Test Results
 
-> **Note**: Test set evaluated strictly **once** after pipeline calibration.
+The original test classification report produced the following results:
 
-| Metric | Target / Measured Value |
-| :--- | :--- |
-| **Macro-F1** | **0.987** |
-| **Test AUC** | **0.999** |
-| **Sensitivity, Specificity & PPV** | Sensitivity **0.991**, Specificity **1.000**, and PPV **1.000** at threshold **0.185** (chosen on val for recall $\ge 0.95$) |
+| Metric | Defective (`def_front`) | Non-Defective (`ok_front`) |
+| :--- | ---: | ---: |
+| **Precision** | 1.000 | 0.989 |
+| **Recall** | 0.993 | 1.000 |
+| **F1-Score** | 0.997 | 0.994 |
+| **Support** | 453 | 262 |
+
+#### Overall Test Performance
+
+| Metric | Measured Value |
+| :--- | ---: |
+| **Test Accuracy** | 0.996 |
+| **Macro Precision** | 0.994 |
+| **Macro Recall** | 0.997 |
+| **Macro-F1** | **0.995** |
+| **Weighted-F1** | 0.996 |
+
+---
+
+### 🎯 Additional Threshold Evaluation
+
+A separate threshold evaluation produced the following results:
+
+| Metric | Measured Value |
+| :--- | ---: |
+| **Validation Threshold** | 0.4830 |
+| **Validation Recall** | 1.000 |
+| **Test AUC** | 0.4682 |
+| **Sensitivity** | 1.000 |
+| **Specificity** | 0.000 |
+| **PPV** | 0.6336 |
+| **True Positives (TP)** | 453 |
+| **False Negatives (FN)** | 0 |
+| **True Negatives (TN)** | 0 |
+| **False Positives (FP)** | 262 |
+
+**Important:** This separate threshold evaluation conflicts with the original classification report. It indicates that every test image was classified as defective. Therefore, the model's class mapping, checkpoint, preprocessing, test loader, and threshold selection must be checked before reporting threshold-based performance as final.
 
 ---
 
@@ -90,15 +176,31 @@ This repository contains the complete implementation and deliverables for **Lab 
 
 | Aspect | Analysis |
 | :--- | :--- |
-| **Grad-CAM Focus** | Visual heatmaps confirm the model looks directly at **surface casting defect regions** on the casting body. |
-| **Shortcut Risk** | Checked and **none found**; model is not learning background fixtures, casting ring edges, or lighting gradients. |
+| **Grad-CAM Target Layer** | `layer4.1.conv2` |
+| **Visualization Samples** | 6 examples: 3 correctly classified and 3 incorrectly classified. |
+| **Interpretability** | Grad-CAM was used to visualize the image regions influencing model predictions. |
+| **Shortcut Risk** | Heatmaps should be inspected to determine whether the model focuses on actual casting defects rather than background, borders, or lighting artifacts. |
+
+**Note:** Grad-CAM visualizations were generated, but the heatmap results need visual inspection before concluding that shortcut learning is absent.
 
 ---
 
 ### ⚠️ Limitations & Deployment Constraints
 
-- **Data Source & Scope**: Industrial images captured under specific foundry lighting and camera setups.
-- **Not For Use**: Not for structural load testing or non-metal castings, nor for safety-critical structural failure prediction without human operator sign-off.
+- **Data Source & Scope:** The dataset contains industrial casting images captured under specific imaging conditions.
+- **Duplicate Images:** Exact and near-duplicate images were identified, so data leakage must be carefully controlled.
+- **Generalization:** Performance on other manufacturing environments, camera setups, and lighting conditions has not yet been established.
+- **Human Verification:** Predictions should be reviewed by quality control personnel before making production decisions.
+- **Not For Use:** This model is not a replacement for structural load testing or engineering safety certification.
+
+---
+
+### 🏁 Conclusion
+
+In Week 6, a pretrained ResNet-18 model was developed for binary casting defect classification. The original test classification report achieved **99.6% accuracy and a 0.995 macro-F1 score**.
+
+The project also explored class weighting, transfer learning, threshold evaluation, and Grad-CAM interpretability. However, the conflicting threshold evaluation results must be investigated before considering the model ready for industrial deployment.
+
 
 ---
 
