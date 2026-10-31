@@ -205,7 +205,218 @@ The project also explored class weighting, transfer learning, threshold evaluati
 ---
 
 
-```text
-├── README.md                                             # Comprehensive project documentation & model card
-├── week-5-transfer-learning.ipynb                         # Week 5 transfer learning baseline notebook
-└── week06-industrial-manufacturing-defects-inspection.ipynb # Week 6 industrial QC & defect detection notebook
+# 🏭 Week 7: Text and Multimodal AI
+### Industrial Manufacturing Defects Inspection
+
+> Applying NLP, OCR, Named Entity Recognition, and Deep Learning to extract meaningful information from industrial inspection reports.
+
+## 📌 Project Overview
+
+In Week 7, I explored how AI can understand and extract information from text and industrial inspection documents. I implemented text classification, Named Entity Recognition (NER), regex-based field extraction, OCR error correction, and privacy masking.
+
+I also integrated my Week 6 ResNet-18 image classification model with text-based industrial evidence to develop a multimodal inspection workflow.
+
+## 1. 📊 Text Classification
+
+**Dataset:** SMS Spam Collection  
+**Total Texts:** 5,572
+
+| Feature Extraction | Macro-F1 | Number of Features |
+|---|---:|---:|
+| Word 1–2 grams | 0.974 | 12,128 |
+| Character 2–5 grams | 0.982 | 36,449 |
+
+**Classification Results:**
+- Accuracy: 98.8%
+- Macro-F1: 0.974
+- Spam Precision: 0.979
+- Spam Recall: 0.933
+
+**Top Spam-like Features:**
+`call, txt, free, text, reply, uk, www, mobile, claim, stop`
+
+**Top Ham-like Features:**
+`my, me, ok, that, it, but, ll, gt, lt, can, what`
+
+Character n-grams performed better than word n-grams because they can recognize unusual spellings and modified spam words.
+
+## 2. 🏷️ Named Entity Recognition (NER)
+
+I applied spaCy NER to my Industrial Manufacturing Defects Inspection domain.
+
+| Model | Precision | Recall | F1-score |
+|---|---:|---:|---:|
+| spaCy Out-of-the-Box | 0.571 | 0.500 | 0.533 |
+| spaCy + EntityRuler | 0.875 | 0.875 | 0.875 |
+
+**Improvement:** 0.342 in F1-score.
+
+The EntityRuler improved the recognition of domain-specific entities, including:
+- PERSON
+- ORG
+- GPE / LOC
+- DATE
+- PRODUCT
+- BATCH_ID
+- DEFECT
+
+This demonstrated the importance of custom entity patterns for industrial inspection reports.
+
+## 3. 🔍 Regex-Based Field Extraction
+
+I implemented regex-based extraction to identify important information from industrial and business documents.
+
+**Successfully extracted fields:**
+- CNIC numbers
+- Mobile numbers
+- Email addresses
+- Financial amounts
+- Dates
+- Invoice numbers
+
+**Test Results:**
+- CNIC and mobile extraction: True
+- Amount and date extraction: True
+- Email and invoice extraction: True
+- Long order number: False
+- Room number and floor: False
+
+The negative tests helped verify that unrelated numbers were not incorrectly extracted as personal identifiers.
+
+## 4. 📄 OCR and Error Correction
+
+OCR was used to extract text from documents and identify common character recognition errors.
+
+| OCR Example | Raw CER | Corrected CER |
+|---|---:|---:|
+| Invoice N0. 4417 | 0.062 | 0.000 |
+| Total: PKR 12,5O0 | 0.059 | 0.000 |
+| Due 3O/09/2O26 | 0.143 | 0.000 |
+
+Correction rules successfully fixed common OCR errors, including:
+- `N0.` → `No.`
+- `5O0` → `500`
+- `3O/09/2O26` → `30/09/2026`
+
+**Additional industrial document OCR test:**
+- Raw CER: 0.008
+- After correction: 0.008
+
+## 5. 🏭 Industrial Domain Text Processing
+
+I created domain-specific sentences related to industrial manufacturing and casting defects.
+
+**Extracted information included:**
+- People: Engineer Ali, Technician Ahmed, Engineer Sara
+- Organizations: ABC Manufacturing, XYZ Industries
+- Locations: Lahore, Karachi
+- Batch ID: 4417
+- Product ID: PI-204
+- Defects: Porosity, shrinkage, cold shut, and cracks
+- AI model: ResNet-18
+
+These examples were used to develop a domain-specific NER dataset and practice industrial information extraction.
+
+## 6. 🔐 Privacy and Personal Information Masking
+
+Sensitive information was masked before logging and further processing.
+
+| Original Information | Masked Output |
+|---|---|
+| CNIC number | [CNIC] |
+| Mobile number | [PHONE] |
+| Email address | [EMAIL] |
+
+This approach helps protect personal information while preserving useful industrial inspection evidence.
+
+## 7. 🤖 Multimodal AI Pipeline
+
+I integrated my Week 6 ResNet-18 image model with text-based industrial evidence extraction.
+
+**Image Model:**
+- Architecture: ResNet-18
+- Classes: `def_front`, `ok_front`
+- Model loaded successfully.
+
+**Industrial Text Evidence:**
+
+| Field | Extracted Value |
+|---|---|
+| Batch ID | BATCH-2026-101 |
+| Part ID | IM-2045 |
+| Machine ID | MCH-07 |
+| Temperature | 180 C |
+| Dimensions | 25.5 mm |
+| Weight | 2.5 kg |
+| Date | 30/10/2026 |
+| Rejection Rate | 12% |
+
+**Detected Defects:**
+- Porosity
+- Crack
+- Shrinkage
+
+**Urgent Term:** Crack
+
+**Final Decision:** `REFER`
+
+**Important Note:** The image model loaded successfully, but the test image `casting_sample.jpg` was not found. Therefore, image probabilities were unavailable, and this example's decision was based on text evidence rather than completed multimodal fusion.
+
+## 8. 📦 Final Pipeline Output
+
+The system generated a structured JSON record containing inspection evidence.
+
+```json
+{
+  "image": "casting_sample.jpg",
+  "image_probabilities": {
+    "status": "unavailable",
+    "message": "Casting image file not found."
+  },
+  "note_masked": "Casting Batch BATCH-2026-101, Part IM-2045. Inspection detected porosity and shrinkage defects. A surface crack was also observed. Machine MCH-07, temperature 180 C, dimension 25.5 mm, rejection rate 12%. Contact: [MOBILE]",
+  "text_evidence": {
+    "detected_defects": [
+      "porosity",
+      "crack",
+      "shrinkage"
+    ],
+    "urgent_terms": [
+      "crack"
+    ]
+  },
+  "decision": "REFER"
+}
+```
+
+## 🎯 Key Learnings
+
+- Implemented text classification using word and character n-grams.
+- Achieved 0.982 macro-F1 with character n-grams.
+- Improved spaCy NER F1 from 0.533 to 0.875 using EntityRuler.
+- Extracted structured information using regex.
+- Corrected common OCR recognition errors.
+- Applied CNIC, phone, and email masking.
+- Integrated ResNet-18 with industrial text evidence extraction.
+
+## 🏁 Conclusion
+
+Week 7 helped me understand how NLP, OCR, NER, and Deep Learning can work together in industrial inspection applications.
+
+By combining image classification with text-based evidence extraction, I developed the foundation of an AI-assisted Industrial Manufacturing Defects Inspection system that can identify potential defects, extract important manufacturing information, and support quality control decisions.
+
+**Next Goal:** Improve the multimodal pipeline by testing real casting images and combining image and text probabilities for more reliable inspection decisions.
+
+---
+
+### 🛠️ Technologies Used
+
+`Python` `NLP` `spaCy` `TF-IDF` `Scikit-learn` `Regex` `OCR` `PyTorch` `ResNet-18` `Multimodal AI`
+
+### 🔖 Tags
+
+#IndustrialAI #Manufacturing #NLP #spaCy #OCR #NER #DeepLearning #ResNet18 #MultimodalAI #QualityControl #LearningInPublic
+
+├── README.md                                                   # Comprehensive project documentation & model card
+├── week-5-transfer-learning.ipynb                              # Week 5 transfer learning baseline notebook
+├── week06-industrial-manufacturing-defects-inspection.ipynb   # Week 6 industrial QC & defect detection notebook
+└── week07-text-and-multimodal-ai.ipynb                         # Week 7 text processing, NLP, OCR & multimodal AI
