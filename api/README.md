@@ -1,5 +1,16 @@
 
 ### Lab 8 – Model Serving, API Testing & Performance Benchmarking
+## 📁 Project Structure
+
+```text
+p2-api/
+│
+├── .venv/                 # Python virtual environment
+├── app.py                 # FastAPI application and prediction endpoints
+├── test_api.py            # API tests (8 test cases)
+├── bench.py               # API performance benchmarking
+├── sample.jpeg            # Sample casting image for prediction
+└── README.md              # Project documentation
 
 ## 📌 Project Overview
 
@@ -43,7 +54,7 @@ The main goal is to make the trained AI model accessible through REST API endpoi
 
 API documentation is available at:
 
-`http://127.0.0.1:8000/docs`
+[Open API Documentation (Swagger UI)](http://127.0.0.1:8000/docs)
 
 ## 🧪 API Testing Results
 
