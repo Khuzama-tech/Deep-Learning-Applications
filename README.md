@@ -564,8 +564,13 @@ This project strengthened my practical understanding of AI model deployment, API
 
 ## 📁 Project Structure
 
-├── api                                                   
+├── api  
+
 ├── README.md                                                   # Comprehensive project documentation & model card
+
 ├── week-5-transfer-learning.ipynb                              # Week 5 transfer learning baseline notebook
+
 ├── week06-industrial-manufacturing-defects-inspection.ipynb   # Week 6 industrial QC & defect detection notebook
+
 └── week07-text-and-multimodal-ai.ipynb                         # Week 7 text processing, NLP, OCR & multimodal AI
+
