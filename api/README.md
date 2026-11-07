@@ -1,16 +1,5 @@
 
 ### Lab 8 – Model Serving, API Testing & Performance Benchmarking
-## 📁 Project Structure
-
-```text
-p2-api/
-│
-├── .venv/                 # Python virtual environment
-├── app.py                 # FastAPI application and prediction endpoints
-├── test_api.py            # API tests (8 test cases)
-├── bench.py               # API performance benchmarking
-├── sample.jpeg            # Sample casting image for prediction
-└── README.md              # Project documentation
 
 ## 📌 Project Overview
 
@@ -154,4 +143,17 @@ This project strengthened my practical understanding of AI model deployment, API
 **Model:** ResNet-18 | **API:** FastAPI | **Testing:** Pytest
 
 `Python` `PyTorch` `FastAPI` `Uvicorn` `Pytest` `Industrial AI` `Computer Vision` `Model Deployment`
+
+## 📁 Project Structure
+
+```text
+p2-api/
+│
+├── .venv/                 # Python virtual environment
+├── app.py                 # FastAPI application and prediction endpoints
+├── test_api.py            # API tests (8 test cases)
+├── bench.py               # API performance benchmarking
+├── sample.jpeg            # Sample casting image for prediction
+└── README.md              # Project documentation
+
 
